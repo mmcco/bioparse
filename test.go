@@ -15,7 +15,8 @@ func main() {
 			os.Exit(1)
 		}
 
-		parseDAF(bufio.NewReader(f))
+		alleles := parseDAF(bufio.NewReader(f))
+		fmt.Println(fn, len(alleles))
 
 		err = f.Close()
 		if err != nil {
