@@ -23,18 +23,20 @@ type allele struct {
 	pos   uint64
 }
 
-type daf_allele struct {
-	allele     allele
-	anc_allele base
-	der_allele base
-	freq       float64
+type dafAllele struct {
+	allele    allele
+	ancAllele base
+	derAllele base
+	freq      float64
 }
 
-func parseDAF(rdr *bufio.Reader) []daf_allele {
-	var alleles []daf_allele
+func parseDAF(rdr *bufio.Reader) []dafAllele {
+	var alleles []dafAllele
 
-	for ln_num := 0; true; ln_num++ {
-		var allele daf_allele
+	uniqMap := make(map[allele]bool)
+
+	for lnNum := 0; true; lnNum++ {
+		var allele dafAllele
 
 		ln, err := rdr.ReadString('\n')
 		if err == io.EOF {
@@ -50,7 +52,7 @@ func parseDAF(rdr *bufio.Reader) []daf_allele {
 
 		flds := strings.Fields(ln)
 		if len(flds) < 5 {
-			fmt.Println("line", string(ln_num), "contains too few fields:")
+			fmt.Println("line", string(lnNum), "contains too few fields:")
 			fmt.Println(ln)
 			os.Exit(1)
 		}
@@ -71,13 +73,13 @@ func parseDAF(rdr *bufio.Reader) []daf_allele {
 
 		switch strings.ToLower(flds[2]) {
 		case "a":
-			allele.anc_allele = A
+			allele.ancAllele = A
 		case "c":
-			allele.anc_allele = C
+			allele.ancAllele = C
 		case "t":
-			allele.anc_allele = T
+			allele.ancAllele = T
 		case "g":
-			allele.anc_allele = G
+			allele.ancAllele = G
 		default:
 			fmt.Println("Invalid base:", flds[2])
 			os.Exit(1)
@@ -85,13 +87,13 @@ func parseDAF(rdr *bufio.Reader) []daf_allele {
 
 		switch strings.ToLower(flds[3]) {
 		case "a":
-			allele.der_allele = A
+			allele.derAllele = A
 		case "c":
-			allele.der_allele = C
+			allele.derAllele = C
 		case "t":
-			allele.der_allele = T
+			allele.derAllele = T
 		case "g":
-			allele.der_allele = G
+			allele.derAllele = G
 		default:
 			fmt.Println("Invalid base:", flds[3])
 			os.Exit(1)
@@ -103,6 +105,12 @@ func parseDAF(rdr *bufio.Reader) []daf_allele {
 			os.Exit(1)
 		}
 		allele.freq = freq
+
+		if uniqMap[allele.allele] {
+			fmt.Println("duplicate allele (chrom " + string(allele.allele.chrom) + ", pos " + string(allele.allele.pos) + " encountered")
+			os.Exit(1)
+		}
+		uniqMap[allele.allele] = true
 
 		alleles = append(alleles, allele)
 	}
