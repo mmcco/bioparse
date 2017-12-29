@@ -18,9 +18,13 @@ const (
 	G
 )
 
+type allele struct {
+	chrom uint8
+	pos   uint64
+}
+
 type daf_allele struct {
-	chrom      uint8 // the various formats specify this as a string
-	pos        uint64
+	allele     allele
 	anc_allele base
 	der_allele base
 	freq       float64
@@ -56,14 +60,14 @@ func parseDAF(rdr *bufio.Reader) []daf_allele {
 			fmt.Println("Invalid chromosome:", flds[0])
 			os.Exit(1)
 		}
-		allele.chrom = uint8(chrom)
+		allele.allele.chrom = uint8(chrom)
 
 		pos, err := strconv.ParseUint(flds[1], 10, 64)
 		if err != nil {
 			fmt.Println("Invalid position:", flds[1])
 			os.Exit(1)
 		}
-		allele.pos = pos
+		allele.allele.pos = pos
 
 		switch strings.ToLower(flds[2]) {
 		case "a":
