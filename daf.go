@@ -30,6 +30,15 @@ type dafAllele struct {
 	freq      float64
 }
 
+func dafMap(x []dafAllele) map[allele]*dafAllele {
+	m := make(map[allele]*dafAllele)
+	for i := range x {
+		a := x[i].allele
+		m[a] = &x[i]
+	}
+	return m
+}
+
 func parseDAF(rdr *bufio.Reader) []dafAllele {
 	var alleles []dafAllele
 
