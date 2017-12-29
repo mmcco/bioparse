@@ -1,2 +1,2 @@
-# bioparse
-A Golang library for parsing various bioinformatics file formats.
+# legofit-lite
+A Golang project that reimplements parts of Legofit.
