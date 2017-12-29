@@ -30,11 +30,11 @@ type dafAllele struct {
 	freq      float64
 }
 
-func dafMap(x []dafAllele) map[allele]*dafAllele {
-	m := make(map[allele]*dafAllele)
+func dafMap(x []dafAllele) map[allele]dafAllele {
+	m := make(map[allele]dafAllele)
 	for i := range x {
 		a := x[i].allele
-		m[a] = &x[i]
+		m[a] = x[i]
 	}
 	return m
 }

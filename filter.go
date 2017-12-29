@@ -3,16 +3,6 @@ package main
 type alleleInfo struct {
 	ctr  int
 	ancs []base
-	ders []base
-}
-
-func uniq(x []base) bool {
-	for i := 1; i < len(x); i++ {
-		if x[i-1] != x[i] {
-			return false
-		}
-	}
-	return true
 }
 
 func filterAlleles(alleleSlices [][]dafAllele) []allele {
@@ -24,8 +14,9 @@ func filterAlleles(alleleSlices [][]dafAllele) []allele {
 			x := alleleInfo[allele.allele]
 
 			x.ctr++
-			x.ancs = append(alleleInfo[allele.allele].ancs, allele.ancAllele)
-			x.ders = append(alleleInfo[allele.allele].ancs, allele.derAllele)
+			if len(x.ancs) == 0 || allele.ancAllele != x.ancs[0] {
+				x.ancs = append(x.ancs, allele.ancAllele)
+			}
 
 			alleleInfo[allele.allele] = x
 		}
@@ -33,7 +24,7 @@ func filterAlleles(alleleSlices [][]dafAllele) []allele {
 
 	var interesting_alleles []allele
 	for allele, alleleInfo := range alleleInfo {
-		if alleleInfo.ctr > 1 && uniq(alleleInfo.ancs) && uniq(alleleInfo.ders) {
+		if alleleInfo.ctr > 1 && len(alleleInfo.ancs) == 1 {
 			interesting_alleles = append(interesting_alleles, allele)
 		}
 	}
